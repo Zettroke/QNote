@@ -16,14 +16,15 @@ try:
     import secret_data
     (secret_data.db_login, secret_data.db_password, secret_data.secret_key)
 except Exception:
-    raise Exception("""
-    Please create secret_data.py in project root folder and fill it with your django secret key and db login/password
-    
-    secret_key = "********"
-    db_login = "******"
-    db_password = "******"
-
-    """)
+    raise Exception(
+        """
+            Please create secret_data.py in project root folder and fill it with your django secret key and db login/password
+            
+            secret_key = "********"
+            db_login = "******"
+            db_password = "******"
+        """
+    )
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -45,6 +46,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'notes.apps.NotesConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
