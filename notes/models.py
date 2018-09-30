@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -22,6 +22,7 @@ class Note(models.Model):
     importance = models.IntegerField(default=5)
 
     notification_config = models.OneToOneField('NotificationConfig', on_delete=models.CASCADE, null=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.text[:min(len(self.text), 20)]
