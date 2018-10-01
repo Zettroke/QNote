@@ -12,6 +12,7 @@ class Tag(models.Model):
 
 
 class Note(models.Model):
+    title = models.CharField(max_length=70)
     text = models.TextField(null=True)
     date_created = models.DateTimeField(null=True)
 
