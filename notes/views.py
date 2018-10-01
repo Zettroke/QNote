@@ -1,6 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, reverse, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.utils import timezone
+
+import datetime
 
 from .models import Note, ToDoList, Tag
 
@@ -8,17 +11,40 @@ from .models import Note, ToDoList, Tag
 
 
 def note_detail(request, note_id):
-    pass
-
+    n = get_object_or_404(Note, pk=note_id)
+    if n.owner == request.user:
+        return render(request, "notes/detail.html", {'note': n, 'tag_list': n.tags.all()})
+    else:
+        return HttpResponseForbidden()
 
 @login_required
 def note_creation(request):
-    return render(request, "notes/create.html")
+    tag_list = Tag.objects.filter(owner=request.user)
+    return render(request, "notes/create.html", {'tag_list': tag_list})
 
 
+@login_required
 def note_add(request):
-    print(
-
-    )
-    return HttpResponseRedirect(reversed("notes:create"))
+    note = Note(owner=request.user)
+    note.title = request.POST["title"]
+    note.text = request.POST["note"]
+    note.date_created = timezone.now()
+    note.save()
+    tag_num = int(request.POST["count"])
+    tag_list = set()
+    for i in range(tag_num):
+        tg = request.POST["tag" + str(i)]
+        if tg and tg.replace(' ', ''):
+            tag_list.add(tg)
+    user_tags = Tag.objects.filter(owner=request.user)
+    for tag_name in tag_list:
+        q_t = user_tags.filter(name=tag_name)
+        if q_t.exists():
+            tag = q_t[0]
+        else:
+            tag = Tag(name=tag_name, owner=request.user)
+            tag.save()
+        note.tags.add(tag)
+    note.save()
+    return HttpResponseRedirect(reverse("notes:detail", args=(note.id,)))
 

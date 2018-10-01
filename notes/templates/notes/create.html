@@ -22,15 +22,14 @@
                 <input class="w3-input w3-col tag" name="tag0" type="text" list="tags" oninput="update_width(event)">
                 <div class="w3-col w3-center" style="background: lightgrey; padding: 8px; border-radius: 16px; font-size: 16px;width: 5%;margin: 2.5px 2.5px;" onclick="addTag()">+</div>
             </div>
-            <input id="tag_counter" type="hidden" value=0 name="count">
+            <input id="tag_counter" type="hidden" value=1 name="count">
             <input type="submit" value="Do IT!!">
         </form>
     </div>
     <datalist id="tags">
-        <option value="New">
-        <option value="Old">
-        <option value="Older">
-        <option value="Oldest">
+        {% for tag in tag_list %}
+            <option value="{{ tag }}">
+        {% endfor %}
     </datalist>
     <script>
         tag_counter = document.getElementById("tag_counter");
@@ -38,7 +37,7 @@
         function addTag(event) {
             if (tag_list.children[tag_list.childElementCount-2].value !== ''){
                 let i = tag_list.children[0].cloneNode(); i.value = ''; i.style.width = '';
-                i.name = "tag" + (Number(i.name.slice(4)) + 1);
+                i.name = "tag" + tag_counter.value;
                 tag_list.insertBefore(i, tag_list.children[tag_list.childElementCount-1]);
                 i.focus();
                 tag_counter.value = Number(tag_counter.value) + 1;
