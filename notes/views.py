@@ -12,7 +12,7 @@ from .models import Note, ToDoList, Tag
 
 def note_detail(request, note_id):
     n = get_object_or_404(Note, pk=note_id)
-    if n.owner == request.user:
+    if n.owner.id == request.user.id:
         return render(request, "notes/detail.html", {'note': n, 'tag_list': n.tags.all()})
     else:
         return HttpResponseForbidden()
