@@ -10,9 +10,9 @@ input::-webkit-calendar-picker-indicator {
     border-radius: 15px;
     margin: 2.5px 2.5px;
 }
-textarea:focus{
-    outline: none;
-}
 .tag:focus{
     outline: none;
+}
+p{
+    margin: 0.25em 0;
 }

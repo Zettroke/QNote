@@ -16,6 +16,7 @@ class Tag(models.Model):
 class Note(models.Model):
     title = models.CharField(max_length=70)
     text = models.TextField(null=True)
+    plain_text = models.TextField(null=True)
     date_created = models.DateTimeField(null=True)
 
     notify = models.BooleanField(default=False)
@@ -28,7 +29,7 @@ class Note(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.text[:min(len(self.text), 20)]
+        return self.plain_text[:min(len(self.text), 20)]
 
 
 class ToDoList(models.Model):

@@ -2,6 +2,7 @@ from django.shortcuts import render, reverse, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.utils import timezone
+import re
 
 import datetime
 
@@ -27,7 +28,11 @@ def note_creation(request):
 def note_add(request):
     note = Note(owner=request.user)
     note.title = request.POST["title"]
-    note.text = request.POST["note"]
+    note.text = request.POST["text"]
+
+    no_tags = re.sub("<[^>]*>", " ", request.POST["text"]).replace("&nbsp;", "")  # replace all html tags with spaces
+    note.plain_text = " ".join(no_tags.split())  # replace multi-spaces with one
+
     note.date_created = timezone.now()
     note.save()
     tag_num = int(request.POST["count"])
