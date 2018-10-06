@@ -35,7 +35,7 @@ def note_add(request):
 
     note.date_created = timezone.now()
     note.save()
-    tag_num = int(request.POST["count"])
+    tag_num = int(request.POST["tag_count"])
     tag_list = set()
     for i in range(tag_num):
         tg = request.POST["tag" + str(i)]

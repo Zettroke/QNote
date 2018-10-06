@@ -16,3 +16,12 @@ input::-webkit-calendar-picker-indicator {
 p{
     margin: 0.25em 0;
 }
+.todo_list{
+    margin: 10px 0.5%;
+    border: 1px #ccc solid;
+    border-radius: 10px;
+}
+.tool_bar_button{
+    padding-left: 8px;
+    padding-right: 8px;
+}
