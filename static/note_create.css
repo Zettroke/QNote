@@ -13,9 +13,7 @@ input::-webkit-calendar-picker-indicator {
 .tag:focus{
     outline: none;
 }
-p{
-    margin: 0.25em 0;
-}
+
 .todo_list{
     margin: 10px 0.5%;
     border: 1px #ccc solid;

@@ -1,7 +1,7 @@
 from django.shortcuts import render, reverse
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect
-from .forms import LoginForm
+
 from notes.models import Note, ToDoList
 # Create your views here.
 
@@ -9,19 +9,17 @@ from notes.models import Note, ToDoList
 def login_view(request):
     if not request.user.is_authenticated:
         if request.method == 'POST':
-            form = LoginForm(request.POST)
-            if form.is_valid():
-                user = authenticate(request, username=form.cleaned_data["login"], password=form.cleaned_data["password"])
-                login(request, user)
-                if user is None:
-                    return HttpResponse("Wrong login/password")
-                elif 'next' in request.GET.keys():
-                    return HttpResponseRedirect(request.GET["next"])
-                else:
-                    return HttpResponseRedirect(reverse('main:root_view'))
+            user = authenticate(request, username=request.POST["login"], password=request.POST["password"])
+            if user is None:
+                return HttpResponse("Wrong login/password")
+            login(request, user)
+            if 'next' in request.GET.keys():
+                return HttpResponseRedirect(request.GET["next"])
+            else:
+                return HttpResponseRedirect(reverse('main:root_view'))
         else:
-            form = LoginForm()
-            return render(request, "main/login.html", {'form': form.as_table()})
+
+            return render(request, "main/login.html")
     else:
         return HttpResponse("U already logged in")
 

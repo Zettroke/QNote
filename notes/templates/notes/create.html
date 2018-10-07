@@ -1,155 +1,141 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Note creation</title>
+{% extends "base.html" %}
+{% block body %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static "note_create.css" %}">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet">
-
-    {% load static %}
-    <link rel="stylesheet" href="{% static "w3.css" %}">
-    <link rel="stylesheet" href="{% static "note_create.css" %}">
-</head>
-<body>
-
-<div style="width: 100vw; height: 100vh;display: flex; justify-content: center; align-items: center">
-    <div style="width: 800px; height: 600px; margin: 0 20px">
-        <form id="note_form" style="height: 100%" action="{% url "notes:add" %}" method="post">
-            {% csrf_token %}
-            <input class="w3-input w3-border" type="text" style="border-radius: 10px; font-size: 20pt" maxlength="70" name="title">
-            <div style="display: flex; align-items: center">
-                <div style="border-right: #ccc 1px solid; margin-right: 16px">
-                    <i class="material-icons w3-button tool_bar_button" onclick="document.execCommand('bold', false)">
-                        format_bold
-                    </i>
-                    <i class="material-icons w3-button tool_bar_button" onclick="document.execCommand('italic', false)">
-                        format_italic
-                    </i>
-                    <i class="material-icons w3-button tool_bar_button" onclick="document.execCommand('underline', false)">
-                        format_underlined
-                    </i>
-                    <i class="material-icons w3-button tool_bar_button" onclick="document.execCommand('removeFormat', false)">
-                        format_clear
-                    </i>
-                    <i class="material-icons w3-button tool_bar_button" onclick="document.execCommand('insertUnorderedList', false)">
-                        format_list_bulleted
-                    </i>
+    <div style="margin: 20px">
+        <div style="width: 100%; max-width: 800px; margin: auto">
+            <form id="note_form" action="{% url "notes:add" %}" method="post">
+                {% csrf_token %}
+                <input class="w3-input w3-border" type="text" style="border-radius: 10px; font-size: 20pt" maxlength="70" name="title">
+                <div style="display: flex; align-items: center">
+                    <div style="border-right: #ccc 1px solid; margin-right: 16px">
+                        <i class="material-icons w3-button tool_bar_button" onclick="document.execCommand('bold', false)">
+                            format_bold
+                        </i>
+                        <i class="material-icons w3-button tool_bar_button" onclick="document.execCommand('italic', false)">
+                            format_italic
+                        </i>
+                        <i class="material-icons w3-button tool_bar_button" onclick="document.execCommand('underline', false)">
+                            format_underlined
+                        </i>
+                        <i class="material-icons w3-button tool_bar_button" onclick="document.execCommand('removeFormat', false)">
+                            format_clear
+                        </i>
+                        <i class="material-icons w3-button tool_bar_button" onclick="document.execCommand('insertUnorderedList', false)">
+                            format_list_bulleted
+                        </i>
+                    </div>
+                    <div class="w3-button" style="font-size: 14pt; flex-shrink: 0" onclick="event_add_todo_list(event)">
+                        ToDoList
+                    </div>
                 </div>
-                <div class="w3-button" style="font-size: 14pt" onclick="event_add_todo_list(event)">
-                    ToDoList
+                <div id="text_editor" style="width: 100%; height: 100%;font-size: 14pt; border:#ccc 1px solid; border-radius: 10px; min-height: 300px" contenteditable="true">
                 </div>
-            </div>
-            <div style="width: 100%; height: 80%">
-                <div id="text_editor" style="width: 100%; height: 100%;font-size: 14pt; border:#ccc 1px solid; border-radius: 10px" contenteditable="true">
+                <div id="todo_list_list" style="display: flex; flex-wrap: wrap; justify-content: center"></div>
+                <label>Tags:</label>
+                <div id="tag_list" class="w3-cell-row">
+                    <input class="w3-input w3-col tag" name="tag0" type="text" list="tags" oninput="update_width(event)">
+                    <div class="w3-col w3-center" style="background: lightgrey;padding: 8px;border-radius: 16px;font-size: 16px;width: fit-content;margin: 2.5px 2.5px;box-sizing: content-box;" onclick="addTag()">+</div>
                 </div>
-            </div>
-            <div id="todo_list_list" style="display: flex; flex-wrap: wrap; justify-content: center"></div>
-            <label>Tags:</label>
-            <div id="tag_list" class="w3-cell-row">
-                <input class="w3-input w3-col tag" name="tag0" type="text" list="tags" oninput="update_width(event)">
-                <div class="w3-col w3-center" style="background: lightgrey;padding: 8px;border-radius: 16px;font-size: 16px;width: fit-content;margin: 2.5px 2.5px;box-sizing: content-box;" onclick="addTag()">+</div>
-            </div>
-
-            <input id="tag_counter" type="hidden" value=1 name="tag_count">
-            <input type="hidden" id="text_input" name="text">
-            <input type="hidden" id="todo_list_count" name="todo_list_count">
-
-            <button class="w3-button" onclick="event_submit(event)">Submit</button>
-        </form>
+                <input id="tag_counter" type="hidden" value=1 name="tag_count">
+                <input type="hidden" id="text_input" name="text">
+                <input type="hidden" id="todo_list_count" name="todo_list_count">
+                <button class="w3-button" onclick="event_submit(event)">Submit</button>
+            </form>
+        </div>
     </div>
-</div>
-<datalist id="tags">
-    {% for tag in tag_list %}
-        <option value="{{ tag }}">
-    {% endfor %}
-</datalist>
-<script>
-    document.execCommand("defaultParagraphSeparator", false, "p");
-    tag_counter = document.getElementById("tag_counter");
-    tag_list = document.getElementById('tag_list');
-    function addTag(event) {
-        if (tag_list.children[tag_list.childElementCount-2].value !== ''){
-            let i = tag_list.children[0].cloneNode(); i.value = ''; i.style.width = '';
-            i.name = "tag" + tag_counter.value;
-            tag_list.insertBefore(i, tag_list.children[tag_list.childElementCount-1]);
-            i.focus();
-            tag_counter.value = Number(tag_counter.value) + 1;
-        }
-    }
-    function update_width(event) {
-        let d = document.createElement('div');
-        d.style.width = "fit-content";
-        d.innerText = event.target.value;
-        document.body.appendChild(d);
-        let w = d.clientWidth;
-        document.body.removeChild(d);
-        if (w > tag_list.clientWidth*0.08-5-20) {
-            event.target.style.width = (w + 20) + "px";
-        }
-    }
-
-    function event_add_todo_entry(event) {
-        add_todo_entry(event.target.parentNode.parentNode.parentNode, event.target);
-    }
-    function add_todo_entry(parent_tbody, button) {
-        let tbody = parent_tbody;
-        let tr = document.createElement("tr");
-        tr.innerHTML =
-            '<td>' +
-                '<input class="w3-check" type="checkbox" disabled="disabled">' +
-            '</td>' +
-            '<td style="vertical-align: center">' +
-                '<input class="w3-input todo_entry" type="text" maxlength=200>' +
-            '</td>' +
-            '<td>' +
-                '<i class="material-icons w3-button" onclick="event_add_todo_entry(event)">add</i>' +
-            '</td>';
-        tbody.appendChild(tr);
-        if (button){
-            button.innerText = "clear";
-            button.onclick = event_remove_todo_entry;
-        }
-    }
-    function event_remove_todo_entry(event) {
-        event.target.parentNode.parentNode.parentNode.removeChild(event.target.parentNode.parentNode);
-    }
-    function event_remove_todo_list(event) {
-        event.target.parentNode.parentNode.removeChild(event.target.parentNode);
-    }
-    function event_add_todo_list(event) {
-        let l = document.getElementById("todo_list_list");
-        let div = document.createElement("div");
-        div.classList.add("todo_list")
-        div.innerHTML =
-            '<i class="material-icons w3-button" style="float: right; padding: 5px; font-size: medium" onclick="event_remove_todo_list(event)">clear</i>' +
-            '<table class="w3-table" style="width: fit-content"><tbody></tbody></table>';
-        l.appendChild(div);
-        add_todo_entry(div.children[1].firstChild);
-    }
-
-
-
-    function event_submit(event) {
-        document.getElementById('text_input').value = document.getElementById('text_editor').innerHTML;
-
-        let todo_list = document.getElementById('todo_list_list');
-        document.getElementById('todo_list_count').value = todo_list.childElementCount;
-        note_form = document.getElementById('note_form');
-        for (let todo_ind=0; todo_ind<todo_list.children.length; todo_ind++) {
-            let entrys = todo_list.children[todo_ind].getElementsByClassName('todo_entry');
-            for (let entry_ind = 0; entry_ind < entrys.length; entry_ind++) {
-                entrys[entry_ind].name = "todo_entry_" + todo_ind + "_" + entry_ind;
+    <datalist id="tags">
+        {% for tag in tag_list %}
+            <option value="{{ tag }}">
+        {% endfor %}
+    </datalist>
+    <script>
+        document.execCommand("defaultParagraphSeparator", false, "p");
+        tag_counter = document.getElementById("tag_counter");
+        tag_list = document.getElementById('tag_list');
+        function addTag(event) {
+            if (tag_list.children[tag_list.childElementCount-2].value !== ''){
+                let i = tag_list.children[0].cloneNode(); i.value = ''; i.style.width = '';
+                i.name = "tag" + tag_counter.value;
+                tag_list.insertBefore(i, tag_list.children[tag_list.childElementCount-1]);
+                i.focus();
+                tag_counter.value = Number(tag_counter.value) + 1;
             }
-            let cnt = document.createElement('input');
-            cnt.type = 'hidden';
-            cnt.value = entrys.length;
-            cnt.name = 'todo_entry_count_' + todo_ind;
-            note_form.appendChild(cnt)
+        }
+        function update_width(event) {
+            let d = document.createElement('div');
+            d.style.width = "fit-content";
+            d.innerText = event.target.value;
+            document.body.appendChild(d);
+            let w = d.clientWidth;
+            document.body.removeChild(d);
+            if (w > tag_list.clientWidth*0.08-5-20) {
+                event.target.style.width = (w + 20) + "px";
+            }
         }
 
-        note_form.submit();
-    }
-</script>
-</body>
-</html>
+        function event_add_todo_entry(event) {
+            add_todo_entry(event.target.parentNode.parentNode.parentNode, event.target);
+        }
+        function add_todo_entry(parent_tbody, button) {
+            let tbody = parent_tbody;
+            let tr = document.createElement("tr");
+            tr.innerHTML =
+                '<td>' +
+                    '<input class="w3-check" type="checkbox" disabled="disabled">' +
+                '</td>' +
+                '<td style="vertical-align: center">' +
+                    '<input class="w3-input todo_entry" type="text" maxlength=200>' +
+                '</td>' +
+                '<td>' +
+                    '<i class="material-icons w3-button" onclick="event_add_todo_entry(event)">add</i>' +
+                '</td>';
+            tbody.appendChild(tr);
+            if (button){
+                button.innerText = "clear";
+                button.onclick = event_remove_todo_entry;
+            }
+        }
+        function event_remove_todo_entry(event) {
+            event.target.parentNode.parentNode.parentNode.removeChild(event.target.parentNode.parentNode);
+        }
+        function event_remove_todo_list(event) {
+            event.target.parentNode.parentNode.removeChild(event.target.parentNode);
+        }
+        function event_add_todo_list(event) {
+            let l = document.getElementById("todo_list_list");
+            let div = document.createElement("div");
+            div.classList.add("todo_list")
+            div.innerHTML =
+                '<i class="material-icons w3-button" style="float: right; padding: 5px; font-size: medium" onclick="event_remove_todo_list(event)">clear</i>' +
+                '<table class="w3-table" style="width: fit-content"><tbody></tbody></table>';
+            l.appendChild(div);
+            add_todo_entry(div.children[1].firstChild);
+        }
+
+
+
+        function event_submit(event) {
+            document.getElementById('text_input').value = document.getElementById('text_editor').innerHTML;
+
+            let todo_list = document.getElementById('todo_list_list');
+            document.getElementById('todo_list_count').value = todo_list.childElementCount;
+            note_form = document.getElementById('note_form');
+            for (let todo_ind=0; todo_ind<todo_list.children.length; todo_ind++) {
+                let entrys = todo_list.children[todo_ind].getElementsByClassName('todo_entry');
+                for (let entry_ind = 0; entry_ind < entrys.length; entry_ind++) {
+                    entrys[entry_ind].name = "todo_entry_" + todo_ind + "_" + entry_ind;
+                }
+                let cnt = document.createElement('input');
+                cnt.type = 'hidden';
+                cnt.value = entrys.length;
+                cnt.name = 'todo_entry_count_' + todo_ind;
+                note_form.appendChild(cnt)
+            }
+
+            note_form.submit();
+        }
+    </script>
+{% endblock %}

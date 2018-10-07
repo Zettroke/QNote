@@ -1,22 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>QNote</title>
+{% extends "base.html" %}
+{% block body %}
     <style>
-        .qnote_h1{
-            margin: 0;
-            font-size: 36pt;
-        }
-        .note{
-            margin: 16px 5px;
-            padding: 0 16px;
-            width: 33%;
-            min-width: 300px;
-            max-width: 49.99999%;
-            height: fit-content;
-        }
+
         .note_list{
             width: 100%;
             display: flex;
@@ -30,15 +15,7 @@
             overflow-wrap: break-word;
             background: white;
         }
-        .tag{
-            font-size: 12pt;
-            width: fit-content;
-            padding: 7.5px;
-            background: lightgrey;
-            border-radius: 15px;
-            margin: 2.5px 2.5px;
-            float: left;
-        }
+
         textarea{
             outline: none; border: none;
         }
@@ -46,63 +23,10 @@
             outline: none;
         }
     </style>
-</head>
-<body>
-    <div class="w3-top w3-container w3-orange" style="display: flex;  align-items: center;flex-wrap: wrap">
-        <h1 class="qnote_h1" style="flex: 1; font-family: 'K2D', sans-serif;font-weight: bold;">QNote</h1>
-        <div style="flex: 1"><a style="float:right; font-size: 20pt" href="/login">Login</a></div>
-    </div>
-
-    <div class="w3-container w3-orange" style="display: flex;  align-items: center;flex-wrap: wrap; z-index: -999">
-        <h1 class="qnote_h1" style="flex: 1; font-family: 'K2D', sans-serif;font-weight: bold;">QNote</h1>
-        <div style="flex: 1"><a style="float:right; font-size: 20pt" href="note_create.html">Login</a></div>
-    </div>
     <div class="note_list">
         {% for note in note_list %}
-        <div class="note" style="background-color: #00bcd4">
-            <h2><a style="font-size: 20pt; font-weight: 500" href="note/{{ note.id }}">{{ note.title }}</a></h2>
-            <div class="heigth: 100%">
-                <div class="note_textarea" style=" width: 100%; font-size: 12pt">{{ note.text|safe }}</div>
-            </div>
-            <div style="display: flex; flex-wrap: wrap;">
-                {% for todo_list in note.todolist_set.all %}
-                    <table>
-                        {% for todo_entry in todo_list.todoentry_set.all %}
-                            <tr>
-                                <td>
-                                    <input class="w3-check" type="checkbox" {% if todo_entry.is_complete %}checked{% endif %}>
-                                </td>
-                                <td style="vertical-align: center">
-                                    {{ todo_entry.text }}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </table>
-                {% endfor %}
-            </div>
-            <div>
-                {% for tag in note.tags.all %}
-                    <div class="tag">{{ tag.name }}</div>
-                {% endfor %}
-            </div>
-        </div>
+            {% include "notes/note.html" %}
         {% endfor %}
-
-
     </div>
-    {% load static %}
-    <link rel="stylesheet" href="{% static "w3.css" %}">
-    <link href="https://fonts.googleapis.com/css?family=K2D:700" rel="stylesheet">
-    <!--<script>
-        lise_note_textarea = document.getElementsByClassName("note_textarea");
-        window.onresize = function (event) {
-            for (i=0; i<lise_note_textarea.length; i++) {
-                lise_note_textarea[i].style.height = 'auto';
-                lise_note_textarea[i].style.height = (lise_note_textarea[i].scrollHeight+10) + "px";
-            }
-        };
-        window.onresize();
 
-    </script>-->
-</body>
-</html>
+{% endblock %}

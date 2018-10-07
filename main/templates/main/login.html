@@ -1,16 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>LogIn</title>
-</head>
-<body>
-    <form method="post">
-        {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="Login">
-    </form>
+{% extends "base.html" %}
+{% block body %}
+    <div style="max-width: 800px; margin: 20px auto">
+    <div style="margin: 0 20px">
+    <style>
+        .login_label{
+            display: block;
+            font-size: 14pt
+        }
+        .input{
+            border: 1px #ccc solid;
+            border-radius: 10px;
+        }
+    </style>
+        <form method="post">
+            {% csrf_token %}
 
-</body>
-</html>
+            <label class="login_label" for="login">Login</label>
+            <input class="w3-input input" type="text" name="login" required>
+            <label class="login_label" for="password">Password</label>
+            <input class="w3-input input" type="password" name="password" required>
+
+            <input style="width: 100%; margin-top: 20px" class="w3-button w3-orange w3-hover-deep-orange" type="submit" value="Login">
+        </form>
+    </div>
+    </div>
+{% endblock %}

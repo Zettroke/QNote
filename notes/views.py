@@ -13,15 +13,17 @@ from .models import Note, ToDoList, ToDoEntry, Tag
 
 def note_detail(request, note_id):
     n = get_object_or_404(Note, pk=note_id)
+
     if n.owner.id == request.user.id:
-        return render(request, "notes/detail.html", {'note': n, 'tag_list': n.tags.all()})
+        return render(request, "notes/detail.html", {'note': n})
     else:
         return HttpResponseForbidden()
+
 
 @login_required
 def note_creation(request):
     tag_list = Tag.objects.filter(owner=request.user)
-    return render(request, "notes/create.html", {'tag_list': tag_list})
+    return render(request, "notes/create.html", {'tag_list': tag_list, 'title': "Note creation"})
 
 
 @login_required
@@ -66,4 +68,19 @@ def note_add(request):
 
     note.save()
     return HttpResponseRedirect(reverse("notes:detail", args=(note.id,)))
+
+
+@login_required
+def mark_todo_entry(request, entry_id):
+    entry = get_object_or_404(ToDoEntry, id=entry_id)
+    if entry.to_do_list.owner == request.user:
+        entry.is_complete = not entry.is_complete
+        if entry.is_complete:
+            entry.date_complete = timezone.now()
+        else:
+            entry.date_complete = None
+        entry.save()
+        return HttpResponse("success")
+    else:
+        return HttpResponseForbidden()
 
