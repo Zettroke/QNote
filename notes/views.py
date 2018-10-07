@@ -6,7 +6,7 @@ import re
 
 import datetime
 
-from .models import Note, ToDoList, Tag
+from .models import Note, ToDoList, ToDoEntry, Tag
 
 # Create your views here.
 
@@ -35,11 +35,12 @@ def note_add(request):
 
     note.date_created = timezone.now()
     note.save()
+
     tag_num = int(request.POST["tag_count"])
     tag_list = set()
     for i in range(tag_num):
         tg = request.POST["tag" + str(i)]
-        if tg and tg.replace(' ', ''):
+        if tg.replace(' ', ''):
             tag_list.add(tg)
     user_tags = Tag.objects.filter(owner=request.user)
     for tag_name in tag_list:
@@ -50,6 +51,19 @@ def note_add(request):
             tag = Tag(name=tag_name, owner=request.user)
             tag.save()
         note.tags.add(tag)
+
+    for todo_index in range(int(request.POST["todo_list_count"])):
+        entrys = []
+        for todo_entry in range(int(request.POST["todo_entry_count_" + str(todo_index)])):
+            entry = request.POST["todo_entry_{}_{}".format(todo_index, todo_entry)]
+            if entry.replace(" ", ""):
+                entrys.append(entry)
+        if len(entrys) != 0:
+            todolist = ToDoList(note=note, owner=request.user)
+            todolist.save()
+            for entry in entrys:
+                ToDoEntry(text=entry, to_do_list=todolist).save()
+
     note.save()
     return HttpResponseRedirect(reverse("notes:detail", args=(note.id,)))
 

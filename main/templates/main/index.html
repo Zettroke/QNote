@@ -12,8 +12,9 @@
         .note{
             margin: 16px 5px;
             padding: 0 16px;
-            width: 24%;
+            width: 33%;
             min-width: 300px;
+            max-width: 49.99999%;
             height: fit-content;
         }
         .note_list{
@@ -62,6 +63,22 @@
             <h2><a style="font-size: 20pt; font-weight: 500" href="note/{{ note.id }}">{{ note.title }}</a></h2>
             <div class="heigth: 100%">
                 <div class="note_textarea" style=" width: 100%; font-size: 12pt">{{ note.text|safe }}</div>
+            </div>
+            <div style="display: flex; flex-wrap: wrap;">
+                {% for todo_list in note.todolist_set.all %}
+                    <table>
+                        {% for todo_entry in todo_list.todoentry_set.all %}
+                            <tr>
+                                <td>
+                                    <input class="w3-check" type="checkbox" {% if todo_entry.is_complete %}checked{% endif %}>
+                                </td>
+                                <td style="vertical-align: center">
+                                    {{ todo_entry.text }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endfor %}
             </div>
             <div>
                 {% for tag in note.tags.all %}

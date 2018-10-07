@@ -2,7 +2,7 @@ from django.shortcuts import render, reverse
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect
 from .forms import LoginForm
-from notes.models import Note
+from notes.models import Note, ToDoList
 # Create your views here.
 
 
@@ -37,4 +37,5 @@ def root_view(request):
         note_list = Note.objects.all().filter(owner=request.user)
     else:
         note_list = []
+
     return render(request, "main/index.html", context={'note_list': note_list})
