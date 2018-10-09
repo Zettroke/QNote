@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block body %}
+    <div style="max-width: 800px; margin: 20px auto">
+    <div style="margin: 0 20px">
+    <style>
+        .login_label{
+            display: block;
+            font-size: 14pt
+        }
+        .input{
+            border: 1px #ccc solid;
+            border-radius: 10px;
+        }
+    </style>
+        <form method="post" onsubmit="reg_submit()">
+            {% csrf_token %}
+
+            <label class="login_label" for="login">Login</label>
+            <div style="position: relative">
+            <input id="login" class="w3-input input" type="text" name="login" oninput="if (!flag_checking){setTimeout(check_login, 500); flag_checking=true}" required><i id="login_icon" class="material-icons" style="position: absolute; top: 20%; right: 0">not_interested</i>
+            </div>
+            <label class="login_label" for="password">Password</label>
+            <input id='password' class="w3-input input" type="password" name="password" required>
+            <label class="login_label" for="password">Repeat password</label>
+            <input id='r_password' class="w3-input input" type="password" required>
+
+            <button style="width: 100%; margin-top: 20px" class="w3-button w3-orange w3-hover-deep-orange" onclick="reg_submit()">Register</button>
+
+        </form>
+    </div>
+    </div>
+     <script>
+         var login = document.getElementById("login");
+         var login_icon = document.getElementById("login_icon");
+         function reg_submit(event) {
+             if (document.getElementById("password").value === document.getElementById("r_password").value){
+                 event.target.parentElement.submit();
+             }else {
+                 alert("Not same passwords")
+             }
+         }
+         var flag_checking = false;
+         function check_login() {
+             var xhttp = new XMLHttpRequest();
+             xhttp.onreadystatechange = function () {
+                 if (this.readyState === 4 && this.status === 200) {
+                     flag_checking = false;
+                     if (this.responseText === "True"){
+                         login_icon.innerText = "done"
+                     }else{
+                         login_icon.innerText = "not_interested"
+                     }
+
+                 }
+             };
+             xhttp.open("GET", "/login_check/?login=" + encodeURIComponent(login.value), true);
+             xhttp.send();
+
+         }
+
+         check_login();
+     </script>
+{% endblock %}

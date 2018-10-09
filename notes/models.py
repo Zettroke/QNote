@@ -29,7 +29,10 @@ class Note(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.plain_text[:min(len(self.text), 20)]
+        if self.plain_text:
+            return self.plain_text[:min(len(self.text), 20)]
+        else:
+            return "EmptyNote"
 
 
 class ToDoList(models.Model):

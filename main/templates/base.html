@@ -8,34 +8,49 @@
     {% load static %}
     <link rel="stylesheet" href="{% static "w3.css" %}">
     <link rel="stylesheet" href="{% static "base.css" %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=K2D:700" rel="stylesheet">
     <script src="{% static "main.js" %}"></script>
     <style>
         .qnote_h1{
             margin: 0;
             font-size: 36pt;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <div class="w3-top w3-container w3-orange" style="display: flex; align-items: center;flex-wrap: wrap">
-        <h1 class="qnote_h1" style="flex: 1; font-family: 'K2D', sans-serif;font-weight: bold;">QNote</h1>
+        <h1 onclick="window.location.href = '/'" class="qnote_h1" style="flex: 1; font-family: 'K2D', sans-serif;font-weight: bold;">QNote</h1>
+        <div style="display: flex; flex-direction: row-reverse; align-items: center">
         {% if user and user.is_authenticated%}
-            <div style="flex: 1"><a style="float:right; font-size: 20pt" href="/logout">Hi, {{ user.username }}</a></div>
+            <a style="font-size: 20pt" href="/logout">Hi, {{ user.username }}</a>
+            <i class="material-icons hove_darker w3-button w3-hover-orange" style="font-size: 24pt; padding: 5px" onclick="window.location.href='/search'">search</i>
+            <i class="material-icons hove_darker w3-button w3-hover-orange" style="font-size: 24pt; padding: 5px" onclick="window.location.href='/note/create'">add</i>
         {% else %}
-            <div style="flex: 1"><a style="float:right; font-size: 20pt" href="/login">Login</a></div>
+            <a style="font-size: 20pt" href="/register">Register</a>
+            <div style="font-size: 20pt">|</div>
+            <a style="font-size: 20pt" href="/login">Login</a>
+
         {% endif %}
+
+        </div>
     </div>
 
     <div class="w3-container w3-orange" style="width:100%; display: flex; align-items: center;flex-wrap: wrap; z-index: -999">
-        <h1 class="qnote_h1" style="flex: 1; font-family: 'K2D', sans-serif;font-weight: bold;">QNote</h1>
+        <h1 onclick="window.location.href = '/'" class="qnote_h1" style="flex: 1; font-family: 'K2D', sans-serif;font-weight: bold;">QNote</h1>
+        <div style="display: flex; flex-direction: row-reverse; align-items: center">
         {% if user and user.is_authenticated%}
-            <div style="flex: 1"><a style="float:right; font-size: 20pt" href="/logout">Hi, {{ user.username }}</a></div>
+            <a style="font-size: 20pt" href="/logout">Hi, {{ user.username }}</a>
+            <i class="material-icons hove_darker w3-button w3-hover-orange" style="font-size: 24pt; padding: 5px" onclick="window.location.href='/search'">search</i>
+            <i class="material-icons hove_darker w3-button w3-hover-orange" style="font-size: 24pt; padding: 5px" onclick="window.location.href='/note/create'">add</i>
         {% else %}
-            <div style="flex: 1"><a style="float:right; font-size: 20pt" href="/login">Login</a></div>
+            <a style="font-size: 20pt" href="/login">Login</a>
         {% endif %}
+
+        </div>
     </div>
-    </div>
+
     {% block body %}
         empty body
     {% endblock %}

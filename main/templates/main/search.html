@@ -1,0 +1,127 @@
+{% extends "base.html"%}
+{% block body %}
+    <style>
+        .include{
+            background: #4CAF50;
+        }
+        .exclude{
+            background: #f44336;
+        }
+        .dropdown {
+            position: relative;
+            display: block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            background-color: #f9f9f9;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .dropdown-hr{
+            margin: 5px 0;
+        }
+
+    </style>
+    <script>document.execCommand("defaultParagraphSeparator", false, '')</script>
+    <div style="margin: 20px">
+        <div style="max-width: 800px; margin: auto">
+            <div style="width: 100%">
+                <table style="width: 100%"><tr>
+                    <td style="width: 100%">
+                        <input id="searchbar" type="search" class="w3-input" style="font-size: 14pt">
+                    </td>
+                    <td>
+                        <button class="w3-button" onclick="start_search()"><i class="material-icons" style="float: right">search</i></button>
+                    </td>
+                </tr></table>
+            </div>
+            <div id="tag_list" style="display: flex; flex-wrap: wrap">
+                <div class="tag include" onclick="addTag()">+</div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="note_list">
+        {% for note in note_list %}
+            {% include "notes/note.html" %}
+        {% endfor %}
+    </div>
+
+
+    <div id="tag_elem_container" style="display: none">
+        <div class="dropdown">
+            <input class="w3-input tag" list="tags" oninput="event_update_input_width()">
+            <div class="dropdown-content">
+                <div><button class="w3-button" onclick="curr = event.target.parentNode.parentNode.parentNode.firstElementChild; curr.classList.remove('include', 'exclude'); curr.classList.add('include');">include</button></div>
+                <div><button class="w3-button" onclick="curr = event.target.parentNode.parentNode.parentNode.firstElementChild; curr.classList.remove('include', 'exclude'); curr.classList.add('exclude');">exclude</button></div>
+                <hr class="dropdown-hr">
+                <div><button class="w3-button" onclick="curr = event.target.parentNode.parentNode.parentNode; curr.parentNode.removeChild(curr)">remove</button></div>
+            </div>
+        </div>
+    </div>
+    <datalist id="tags">
+        {% for tag in tag_list %}
+            <option value="{{ tag }}">
+        {% endfor %}
+    </datalist>
+    <script>
+        var tag_element = document.getElementById("tag_elem_container").firstElementChild;
+        tag_list = document.getElementById('tag_list');
+        {
+            function query_params(querystring) {
+                // remove any preceding url and split
+                querystring = querystring.substring(querystring.indexOf('?') + 1).split('&');
+                var params = {}, pair, d = decodeURIComponent;
+                // march and parse
+                for (var i = querystring.length - 1; i >= 0; i--) {
+                    pair = querystring[i].split('=');
+                    params[d(pair[0])] = pair[1] || '';
+
+                }
+
+                return params;
+            }
+
+            params = query_params(window.location.href);
+            if (params.hasOwnProperty('tags')) {
+                tags = params.tags.split('+');
+                for (let i = 0; i < tags.length; i++) {
+                    let tag = tags[i];
+                    let is_exclude = (tag[0] === '^');
+                    if (is_exclude) {
+                        tag = tag.slice(1);
+                    }
+                    tag = decodeURIComponent(tag);
+                    let new_tag = tag_element.cloneNode(true);
+                    new_tag.firstElementChild.value = tag;
+                    new_tag.firstElementChild.classList.add(is_exclude ? 'exclude' : 'include');
+                    tag_list.insertBefore(new_tag, tag_list.children[tag_list.childElementCount-1]);
+                    update_input_width(new_tag.firstElementChild);
+                }
+            }
+        }
+
+        function start_search(event) {
+            let tags_array = [];
+            for (let i=0; i<tag_list.children.length-1; i++){
+                let tag = tag_list.children[i].firstElementChild;
+                tags_array.push((tag.classList.contains('exclude') ? '^' : '') + encodeURIComponent(tag.value));
+            }
+            let tags_str = tags_array.join("+");
+
+            window.location.href = "/search?tags=" + tags_str;
+        }
+        
+        function addTag() {
+            let new_tag = tag_element.cloneNode(true);
+            new_tag.firstElementChild.classList.add('include');
+            tag_list.insertBefore(new_tag, tag_list.children[tag_list.childElementCount-1]);
+            update_input_width(new_tag.firstElementChild);
+        }
+    </script>
+{% endblock %}

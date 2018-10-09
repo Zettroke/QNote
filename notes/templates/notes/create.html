@@ -2,8 +2,6 @@
 {% block body %}
     {% load static %}
     <link rel="stylesheet" href="{% static "note_create.css" %}">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-          rel="stylesheet">
     <div style="margin: 20px">
         <div style="width: 100%; max-width: 800px; margin: auto">
             <form id="note_form" action="{% url "notes:add" %}" method="post">
@@ -35,9 +33,9 @@
                 </div>
                 <div id="todo_list_list" style="display: flex; flex-wrap: wrap; justify-content: center"></div>
                 <label>Tags:</label>
-                <div id="tag_list" class="w3-cell-row">
-                    <input class="w3-input w3-col tag" name="tag0" type="text" list="tags" oninput="update_width(event)">
-                    <div class="w3-col w3-center" style="background: lightgrey;padding: 8px;border-radius: 16px;font-size: 16px;width: fit-content;margin: 2.5px 2.5px;box-sizing: content-box;" onclick="addTag()">+</div>
+                <div id="tag_list" style="display: flex; flex-wrap: wrap">
+                    <input class="w3-input tag" name="tag0" type="text" list="tags" oninput="event_update_input_width()">
+                    <div class="w3-center" style="background: lightgrey;padding: 8px;border-radius: 16px;font-size: 16px;width: fit-content;margin: 2.5px 2.5px;box-sizing: content-box;" onclick="addTag()">+</div>
                 </div>
                 <input id="tag_counter" type="hidden" value=1 name="tag_count">
                 <input type="hidden" id="text_input" name="text">
@@ -55,6 +53,7 @@
         document.execCommand("defaultParagraphSeparator", false, "p");
         tag_counter = document.getElementById("tag_counter");
         tag_list = document.getElementById('tag_list');
+        update_input_width(tag_list.firstElementChild);
         function addTag(event) {
             if (tag_list.children[tag_list.childElementCount-2].value !== ''){
                 let i = tag_list.children[0].cloneNode(); i.value = ''; i.style.width = '';
@@ -62,17 +61,7 @@
                 tag_list.insertBefore(i, tag_list.children[tag_list.childElementCount-1]);
                 i.focus();
                 tag_counter.value = Number(tag_counter.value) + 1;
-            }
-        }
-        function update_width(event) {
-            let d = document.createElement('div');
-            d.style.width = "fit-content";
-            d.innerText = event.target.value;
-            document.body.appendChild(d);
-            let w = d.clientWidth;
-            document.body.removeChild(d);
-            if (w > tag_list.clientWidth*0.08-5-20) {
-                event.target.style.width = (w + 20) + "px";
+                update_input_width(i);
             }
         }
 

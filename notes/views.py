@@ -51,6 +51,7 @@ def note_add(request):
             tag = q_t[0]
         else:
             tag = Tag(name=tag_name, owner=request.user)
+
             tag.save()
         note.tags.add(tag)
 

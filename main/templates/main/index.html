@@ -1,28 +1,5 @@
 {% extends "base.html" %}
 {% block body %}
-    <style>
-
-        .note_list{
-            width: 100%;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-evenly;
-        }
-        .note_textarea::-webkit-scrollbar{
-            display: none;
-        }
-        .note_textarea{
-            overflow-wrap: break-word;
-            background: white;
-        }
-
-        textarea{
-            outline: none; border: none;
-        }
-        textarea:focus{
-            outline: none;
-        }
-    </style>
     <div class="note_list">
         {% for note in note_list %}
             {% include "notes/note.html" %}
