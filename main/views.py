@@ -6,20 +6,24 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
 from urllib.parse import unquote
 
 from notes.models import Note, ToDoList, Tag
+from .models import UserStorage
 # Create your views here.
 
 
 def register_view(request):
     if not request.user.is_authenticated:
         if request.method == 'POST':
-            if request.POST["login"] and not User.objects.filter(name=request.POST["login"]).exists()  :
+            if request.POST["login"] and not User.objects.filter(username=request.POST["login"]).exists():
+
                 user = User.objects.create_user(request.POST["login"], '', request.POST["password"])
                 user.save()
+
                 login(request, user)
                 if 'next' in request.GET.keys():
                     return HttpResponseRedirect(request.GET["next"])
                 else:
-                    return HttpResponseRedirect(reverse('main:root_view'))
+                    return HttpResponseRedirect(reverse('main:index_view'))
+
             else:
                 return render(request, "main/register.html")
         else:
@@ -38,7 +42,7 @@ def login_view(request):
             if 'next' in request.GET.keys():
                 return HttpResponseRedirect(request.GET["next"])
             else:
-                return HttpResponseRedirect(reverse('main:root_view'))
+                return HttpResponseRedirect(reverse('main:index_view'))
         else:
 
             return render(request, "main/login.html")
@@ -49,29 +53,30 @@ def login_view(request):
 def logout_view(request):
     if request.user.is_authenticated:
         logout(request)
-    return HttpResponseRedirect(reverse('main:root_view'))
+    return HttpResponseRedirect(reverse('main:index_view'))
 
 
-def root_view(request):
+def index_view(request):
     if request.user.is_authenticated:
-        note_list = Note.objects.all().filter(owner=request.user)
+        note_list = Note.objects.all().filter(owner=request.user).order_by('-date_created')
     else:
         note_list = []
 
-    return render(request, "main/index.html", context={'note_list': note_list})
+    return render(request, "main/index.html", context={'note_list': note_list, "title": "QNote"})
 
 
 @login_required
 def search(request):
     n = Note.objects.filter(owner=request.user)
-
     query = request.META['QUERY_STRING']
     k, v = '', ''
+
     if query:
         for i in query.split("&"):
-            k, v = i.split("=")
-            if k == "tags":
-                break
+            if i:
+                k, v = i.split("=")
+                if k == "tags":
+                    break
     if k == "tags":
         include = []
         exclude = []
@@ -87,7 +92,14 @@ def search(request):
         for tag in exclude:
             n = n.exclude(tags__name__iexact=tag)
 
+    text = ''
+    if "text" in request.GET.keys():
+        text = request.GET["text"]
+    if text:
+        n = n.filter(plain_text__search=text)
+
     tag_list = Tag.objects.filter(owner=request.user)
+
     return render(request, "main/search.html", {'tag_list': tag_list, 'title': "Note creation", 'note_list': n.all()})
 
 

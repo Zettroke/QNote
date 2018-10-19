@@ -28,3 +28,28 @@ function update_input_width(element) {
         element.style.width = 45 + 'px';
     }
 }
+
+function short_file_name(name, len){
+    dot = name.lastIndexOf('.');
+
+    if (name.length > len) {
+        if (dot === -1) {
+            return name.slice(0, len) + "...";
+        } else {
+            ext = name.slice(dot);
+            if (ext.length > len) {
+                return '... ' + ext;
+            } else {
+                return name.slice(0, len - ext.length) + '... <span style="word-break: normal">' + ext + '</span>';
+            }
+        }
+    }else{
+        if (dot === -1) {
+            return name;
+        } else {
+            ext = name.slice(dot);
+            return name.slice(0, name.length - ext.length) + '<span style="word-break: normal">' + ext + '</span>';
+
+        }
+    }
+}

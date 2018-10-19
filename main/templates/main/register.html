@@ -17,7 +17,7 @@
 
             <label class="login_label" for="login">Login</label>
             <div style="position: relative">
-            <input id="login" class="w3-input input" type="text" name="login" oninput="if (!flag_checking){setTimeout(check_login, 500); flag_checking=true}" required><i id="login_icon" class="material-icons" style="position: absolute; top: 20%; right: 0">not_interested</i>
+            <input id="login" class="w3-input input" type="text" name="login" oninput="if (!flag_checking){setTimeout(check_login, 500); flag_checking=true}" required><i id="login_icon" class="material-icons" style="color:red;position: absolute; top: 20%; right: 0">not_interested</i>
             </div>
             <label class="login_label" for="password">Password</label>
             <input id='password' class="w3-input input" type="password" name="password" required>
@@ -46,9 +46,11 @@
                  if (this.readyState === 4 && this.status === 200) {
                      flag_checking = false;
                      if (this.responseText === "True"){
-                         login_icon.innerText = "done"
+                         login_icon.innerText = "done";
+                         login_icon.style.color = "green";
                      }else{
-                         login_icon.innerText = "not_interested"
+                         login_icon.innerText = "not_interested";
+                         login_icon.style.color = "red"
                      }
 
                  }

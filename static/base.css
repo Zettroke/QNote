@@ -1,3 +1,5 @@
+
+
 .note{
     margin: 16px 5px;
     padding: 0 16px;
@@ -8,7 +10,7 @@
     word-break: break-all;
 }
 .hor_line{
-    margin: 0 -16px;
+    margin: 2px -16px;
     border-top: 1px #ccc solid
 }
 .tag_list{
@@ -58,4 +60,44 @@ p{
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
+}
+
+.thumbnail_container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    overflow-wrap: break-word;
+    width: 102px;
+    height: 102px;
+    margin: 5px;
+    border: 1px #ccc solid;
+    border-radius: 5px;
+}
+.thumbnail{
+    padding: 1px;
+    font-size: 40px!important;
+    max-height: 100%;
+    max-width: 100%;
+}
+.file_label{
+    text-align: center;
+    width: 100%;
+    padding: 0 5px;
+    font-size: 10pt;
+    word-break: break-all;
+}
+
+@keyframes error_animation {
+    from{
+        background: rgba(255, 0, 5, 0.6);
+    }
+    to{
+        background: none;
+    }
+}
+
+.error_message{
+    animation: error_animation;
+    animation-duration: 1s;
 }

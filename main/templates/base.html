@@ -21,7 +21,10 @@
 </head>
 <body>
     <div class="w3-top w3-container w3-orange" style="display: flex; align-items: center;flex-wrap: wrap">
-        <h1 onclick="window.location.href = '/'" class="qnote_h1" style="flex: 1; font-family: 'K2D', sans-serif;font-weight: bold;">QNote</h1>
+        <div style="">
+        <a href="/" style="text-decoration: none"><h1 class="qnote_h1" style="font-family: 'K2D', sans-serif;font-weight: bold;">QNote</h1></a>
+        </div>
+        <div style="flex: 1"></div>
         <div style="display: flex; flex-direction: row-reverse; align-items: center">
         {% if user and user.is_authenticated%}
             <a style="font-size: 20pt" href="/logout">Hi, {{ user.username }}</a>

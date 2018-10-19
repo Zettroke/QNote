@@ -1,10 +1,14 @@
 <div class="note">
     <h2><a style="text-decoration: none" href="{% url "notes:detail" note.id %}">{{ note.title }}</a></h2>
-    <hr class="hor_line">
-    <div class="note_text" style="resize: none; width: 100%; height: 100%; padding: 0; border: none;font-size: 16pt">{{ note.text|safe }}</div>
-    {% if note.text and note.todolist_set.all|length%}
+    {% if note.text %}
         <hr class="hor_line">
     {% endif %}
+    <div class="note_text" style="resize: none; width: 100%; height: 100%; padding: 0; border: none;font-size: 16pt">{{ note.text|safe }}</div>
+
+    {% if note.todolist_set.all|length %}
+        <hr class="hor_line">
+    {% endif %}
+
     <div style="display: flex; flex-wrap: wrap;">
         {% for todo_list in note.todolist_set.all %}
             <table>
@@ -22,14 +26,42 @@
         {% endfor %}
     </div>
 
-    {% if note.text and note.tags.all|length%}
+
+    {% if note.file_set.all|length%}
         <hr class="hor_line">
     {% endif %}
-    {% if note.tags.all|length %}
-    <div class="tag_list">
-        {% for tag in note.tags.all %}
-            <div class="tag" onclick="window.location.href = 'search?tags={{ tag.name|urlencode }}'">{{ tag.name }}</div>
+
+    <div style="display: flex; flex-wrap: wrap">
+        {% load notes_extra %}
+        {% for file in note.file_set.all %}
+            <a target="_blank" style="text-decoration: none" href="{{ file.get_file_url }}" title="{{ file.name }}">
+            {% if file.type == "img" %}
+                <div class="thumbnail_container">
+                    {% if not file.is_gif %}
+                    <img class="thumbnail" src="{{ file.get_file_thumbnail_url }}" alt="thumbnail for {{ file.name }}">
+                    {% else %}
+                    <img class="thumbnail" src="{{ file.get_file_url }}" alt="{{ file.name }}">
+
+                    {% endif %}
+                </div>
+            {% elif file.type == "file" %}
+                <div class="thumbnail_container">
+                    <i class="material-icons thumbnail">insert_drive_file</i>
+                    <div class="file_label">{{ file.name|short_file_label:25 }}</div>
+                </div>
+            {% endif %}
+            </a>
         {% endfor %}
     </div>
+    {% if  note.tags.all|length%}
+        <hr class="hor_line">
+    {% endif %}
+
+    {% if note.tags.all|length %}
+        <div class="tag_list">
+            {% for tag in note.tags.all %}
+                <div class="tag" onclick="window.location.href = 'search?tags={{ tag.name|urlencode }}'">{{ tag.name }}</div>
+            {% endfor %}
+        </div>
     {% endif %}
 </div>

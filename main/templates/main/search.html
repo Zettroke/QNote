@@ -33,15 +33,18 @@
             <div style="width: 100%">
                 <table style="width: 100%"><tr>
                     <td style="width: 100%">
-                        <input id="searchbar" type="search" class="w3-input" style="font-size: 14pt">
+                        <input id="search_bar" type="search" class="w3-input" style="font-size: 14pt">
                     </td>
                     <td>
                         <button class="w3-button" onclick="start_search()"><i class="material-icons" style="float: right">search</i></button>
                     </td>
                 </tr></table>
             </div>
-            <div id="tag_list" style="display: flex; flex-wrap: wrap">
-                <div class="tag include" onclick="addTag()">+</div>
+            <div style="display: flex;">
+                <div class="tag"; style="background: none; filter: none; cursor: auto">Tags:</div>
+                <div id="tag_list" style="display: flex; flex-wrap: wrap">
+                    <div class="tag include" onclick="addTag()">+</div>
+                </div>
             </div>
         </div>
     </div>
@@ -104,6 +107,9 @@
                     update_input_width(new_tag.firstElementChild);
                 }
             }
+            if (params.hasOwnProperty("text")){
+                document.getElementById("search_bar").value = decodeURIComponent(params.text);
+            }
         }
 
         function start_search(event) {
@@ -113,8 +119,20 @@
                 tags_array.push((tag.classList.contains('exclude') ? '^' : '') + encodeURIComponent(tag.value));
             }
             let tags_str = tags_array.join("+");
+            let search = document.getElementById("search_bar").value;
+            let href = "/search?";
+            if (search){
+                href += "text=" + encodeURIComponent(search);
+            }
+            if (search && tags_str){
+                href+='&';
+            }
+            if (tags_str){
+                href += "tags=" + tags_str;
+            }
 
-            window.location.href = "/search?tags=" + tags_str;
+
+            window.location.href = href;
         }
         
         function addTag() {

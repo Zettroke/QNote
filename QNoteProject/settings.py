@@ -40,22 +40,28 @@ SECRET_KEY = secret_data.secret_key
 DEBUG = True
 
 
-ALLOWED_HOSTS = []
+if not DEBUG:
+    import logging
+    logging.disable(logging.CRITICAL)
+
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 LOGIN_URL = "/login/"
-
 
 # Application definition
 
 INSTALLED_APPS = [
     'notes.apps.NotesConfig',
     'main.apps.MainConfig',
+    'notes.templatetags.notes_extra',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres'
 ]
 
 MIDDLEWARE = [
@@ -95,7 +101,7 @@ WSGI_APPLICATION = 'QNoteProject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "qnoteproject",
+        'NAME': "qnote_test1",
         'USER': secret_data.db_login,
         'PASSWORD': secret_data.db_password,
         'HOST': '127.0.0.1',
@@ -122,6 +128,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+        'django.contrib.auth.backends.ModelBackend',
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -139,8 +148,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
-
+# STATIC_ROOT = "static"
 STATIC_URL = '/static/'
+
+MEDIA_ROOT = 'media'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
