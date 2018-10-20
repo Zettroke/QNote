@@ -101,7 +101,7 @@ WSGI_APPLICATION = 'QNoteProject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "qnote_test1",
+        'NAME': "qnote",
         'USER': secret_data.db_login,
         'PASSWORD': secret_data.db_password,
         'HOST': '127.0.0.1',

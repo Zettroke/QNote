@@ -11,7 +11,7 @@ def _thumbnailer(queue):
             img = Image.open(s)
             w, h = img.size
             if w <= 10000 and h <= 10000:
-                img.thumbnail((256, 256))
+                img.thumbnail((300, 300))
                 dr, f = os.path.split(s)
                 img.save(os.path.join(dr, "thumbnail_" + f))
         except Exception as e:

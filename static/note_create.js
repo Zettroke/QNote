@@ -83,15 +83,7 @@ function show_not_enought_space_msg(total_size) {
     }
 
     msg += " Attachment: ";
-    if (total_size >= 1024*1024*1024) {
-        msg += (total_size/(1024*1024*1024)).toFixed(2) + " GB";
-    }else if (total_size >= 1024*1024){
-        msg += (total_size/(1024*1024)).toFixed(2) + " MB";
-    }else if (total_size >= 1024){
-        msg += (total_size/(1024)).toFixed(2) + " KB";
-    }else{
-        msg += total_size + " Bytes";
-    }
+    msg += format_file_size(total_size);
     o.innerText = msg;
 }
 
@@ -112,6 +104,12 @@ function submit(event) {
         cnt.value = entrys.length;
         cnt.name = 'todo_entry_count_' + todo_ind;
         note_form.appendChild(cnt)
+    }
+
+    if (!document.getElementById('title').value){
+        o = document.getElementById("error_no_title");
+        show_and_play_animation(o);
+        return
     }
 
     let total_size = 0;

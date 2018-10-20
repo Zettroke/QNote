@@ -53,15 +53,18 @@
             </a>
         {% endfor %}
     </div>
-    {% if  note.tags.all|length%}
-        <hr class="hor_line">
-    {% endif %}
 
     {% if note.tags.all|length %}
+        <hr class="hor_line">
         <div class="tag_list">
             {% for tag in note.tags.all %}
                 <div class="tag" onclick="window.location.href = 'search?tags={{ tag.name|urlencode }}'">{{ tag.name }}</div>
             {% endfor %}
         </div>
+    {% endif %}
+
+    {% if note_edit %}
+        <div class="w3-button w3-orange w3-hover-orange hover_darker" style="width: calc(100% + 32px); transform: translateX(-16px); border-radius: 0 0 8px 8px;"
+                                     onclick="remove_note_post(event, {{ note.id }})">Delete</div>
     {% endif %}
 </div>

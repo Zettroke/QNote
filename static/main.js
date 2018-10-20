@@ -53,3 +53,15 @@ function short_file_name(name, len){
         }
     }
 }
+
+function format_file_size(total_size) {
+    if (total_size >= 1024*1024*1024) {
+        return (total_size/(1024*1024*1024)).toFixed(1) + " GB";
+    }else if (total_size >= 1024*1024){
+        return (total_size/(1024*1024)).toFixed(1) + " MB";
+    }else if (total_size >= 1024){
+        return (total_size/(1024)).toFixed(1) + " KB";
+    }else{
+        return total_size + " bytes";
+    }
+}

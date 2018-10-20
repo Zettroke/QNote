@@ -15,7 +15,7 @@
         <div style="width: 100%; max-width: 800px; margin: auto">
             <div id="note_form">
                 {% csrf_token %}
-                <input class="w3-input w3-border" type="text" style="border-radius: 10px; font-size: 20pt" maxlength="70" name="title">
+                <input class="w3-input w3-border" type="text" style="border-radius: 10px; font-size: 20pt" maxlength="70" name="title" id="title">
                 <div id="error_no_title" class="w3-text-red error_message" style="display: none;">Note must have title</div>
                 <div style="display: flex; align-items: center">
                     <div style="border-right: #ccc 1px solid; margin-right: 16px">
@@ -57,7 +57,6 @@
             </div>
         </div>
     </div>
-    <div id="progress">0%</div>
     <datalist id="tags">
         {% for tag in tag_list %}
             <option value="{{ tag }}">

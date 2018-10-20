@@ -4,6 +4,7 @@ from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.conf import settings
 import os
+import time
 
 # Create your models here.
 
@@ -91,7 +92,6 @@ class File(models.Model):
 @receiver(post_delete, sender=File)
 def file_post_delete(sender, instance, **kwargs):
     os.remove(instance.get_file_path())
-
     try:
         dr, f = os.path.split(instance.get_file_path())
         os.remove(os.path.join(dr, "thumbnail_" + f))

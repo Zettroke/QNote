@@ -7,7 +7,7 @@
     height: fit-content;
     border: 1px #ccc solid;
     border-radius: 10px;
-    word-break: break-all;
+    word-break: break-word;
 }
 .hor_line{
     margin: 2px -16px;
@@ -28,7 +28,7 @@
     margin: 2.5px 2.5px;
     float: left;
 }
-.hove_darker{
+.hover_darker:hover{
     filter: brightness(80%);
 }
 

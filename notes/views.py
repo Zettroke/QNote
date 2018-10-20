@@ -153,3 +153,25 @@ def mark_todo_entry(request, entry_id):
     else:
         return HttpResponseForbidden()
 
+
+@login_required
+def remove_file(request, file_id):
+    file = get_object_or_404(File, id=file_id)
+    if file.owner == request.user:
+        file.delete()
+        return JsonResponse({'status': "success",
+                             'used_space': request.user.storage.used_space,
+                             'total_space': request.user.storage.total_space})
+    else:
+        return HttpResponseForbidden()
+
+
+@login_required
+def remove_note(request, note_id):
+    note = get_object_or_404(Note, id=note_id)
+    if note.owner == request.user:
+        note.delete()
+        return HttpResponse("success")
+    else:
+        return HttpResponseForbidden()
+

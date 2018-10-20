@@ -1,6 +1,6 @@
-from django.shortcuts import render, reverse
+from django.shortcuts import render, reverse, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
 from urllib.parse import unquote
@@ -37,7 +37,7 @@ def login_view(request):
         if request.method == 'POST':
             user = authenticate(request, username=request.POST["login"], password=request.POST["password"])
             if user is None:
-                return HttpResponse("Wrong login/password")
+                return render(request, "main/login.html")
             login(request, user)
             if 'next' in request.GET.keys():
                 return HttpResponseRedirect(request.GET["next"])
@@ -112,3 +112,28 @@ def login_check(request):
         ans = "True"
 
     return HttpResponse(ans)
+
+
+@login_required
+def account_view(request):
+    files = request.user.file_set.all()
+    notes = request.user.note_set.order_by('-date_created').all()
+    return render(request, "main/account.html", context={"title": "Account: " + request.user.username, "files": files, "notes": notes})
+
+
+@login_required
+def password_change(request):
+    try:
+        if request.method == "POST":
+            request.user.set_password(request.POST["password"])
+            request.user.save()
+            logout(request)
+    except Exception: pass
+
+    return redirect("main:index_view")
+
+
+@login_required
+def delete_account(request):
+    request.user.delete()
+    return redirect('main:index_view')

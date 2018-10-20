@@ -1,10 +1,189 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block body %}
+    <style>
+        th{
+            text-align: center!important;
+        }
+        td{
+            vertical-align: middle!important;
+            word-break: break-all;
+        }
+        td:nth-child(5){
+            width: fit-content;
+            text-align: center;
+        }
+        .hor_line{
+            margin: 2px -5px;
+        }
+        .file_data{
+            padding: 0 5px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px;
+            width: 300px;
+        }
+        .thumbnail_container{
+            width: 152px;
+            height: 152px;
+        }
+        .thumbnail{
+            font-size: 80px!important;
+        }
 
-</body>
-</html>
+    </style>
+
+    <div style="margin: 20px">
+        <div style="width: 100%; max-width: 1000px; margin: auto">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap">
+                <div style="display: flex; align-items: baseline; flex-wrap: wrap">
+                    <h1 style="margin: 50px 0; margin-right: 50px; font-weight: 500">{{ user.username }}'s account:</h1>
+                    <p id="storage_status">{{ user.storage.used_space|filesizeformat }} of {{ user.storage.total_space|filesizeformat }}</p>
+                </div>
+                <button class="w3-button w3-orange w3-hover-orange hover_darker" onclick="window.location.href = '/logout'">Logout</button>
+            </div>
+            <hr class="hor_line">
+            <div style="">
+                <h2>Change password:</h2>
+                <form onsubmit="on_submit(event)" action="{% url "main:password_change" %}" method="post"
+                      style="display: flex; flex-direction: column">
+                    {% csrf_token %}
+                    <label for="psw">New password</label>
+                    <input id="psw" class="w3-input" type="password" name="password">
+                    <label for="psw_r">Repeat password</label>
+                    <input id="psw_r" class="w3-input" type="password">
+                    <div id="error" class="w3-text-red" style="display: none">You entered different passwords. Try again</div>
+                    <input type="submit" class="w3-button w3-orange w3-hover-orange hover_darker" style="margin: 10px 0">
+                </form>
+            </div>
+            <hr class="hor_line" style="margin: 20px 0;">
+            <h2>Notes:</h2>
+
+            <div id="Tab_buttons">
+                <button class="tab_button w3-button w3-bottombar" style="margin: 0 5px" onclick="open_tab(0)">Notes</button>
+                <button class="tab_button w3-button w3-bottombar" style="margin: 0 5px" onclick="open_tab(1)">Files</button>
+            </div>
+        </div>
+        <div class="tab_content note_list" style="display: none">
+            {% for note in notes %}
+                {% include "notes/note.html" with note_edit=True %}
+            {% endfor %}
+        </div>
+        <div class="tab_content" style="display: none; flex-wrap: wrap; align-items: flex-start; justify-content: space-evenly">
+            {% load notes_extra %}
+            {% for file in files %}
+                <div class="file_data">
+                    <a target="_blank" style="text-decoration: none" href="{{ file.get_file_url }}" title="{{ file.name }}">
+                        {% if file.type == "img" %}
+                            <div class="thumbnail_container">
+                                {% if not file.is_gif %}
+                                    <img class="thumbnail" src="{{ file.get_file_thumbnail_url }}" alt="thumbnail for {{ file.name }}">
+                                {% else %}
+                                    <img class="thumbnail" src="{{ file.get_file_url }}" alt="{{ file.name }}">
+                                {% endif %}
+                            </div>
+                        {% elif file.type == "file" %}
+                            <div class="thumbnail_container">
+                                <i class="material-icons thumbnail">insert_drive_file</i>
+                            </div>
+                        {% endif %}
+                        </a>
+                    </td>
+                    <div>
+                        <p style="word-break: break-word">{{ file.name }}</p>
+                        <hr class="hor_line">
+                        <div style="display: flex; justify-content: space-between; flex-wrap: wrap; font-size: 13px">
+                            <p style="margin-right: 10px">{{ file.size|filesizeformat }}</p>
+
+                            <p>{{ file.note.date_created|date:"d.m.y G:i" }}</p>
+                        </div>
+                    </div>
+                    <div class="w3-button w3-orange w3-hover-orange hover_darker" style="width: calc(100% + 10px); border-radius: 0 0 8px 8px;"
+                         onclick="remove_file_post(event, {{ file.id }})">Delete</div>
+                </div>
+            {% endfor %}
+        </div>
+        <div style="width: 100%; max-width: 1000px; margin: auto; margin-top: 25px">
+            <button class="w3-button w3-orange w3-hover-orange hover_darker" onclick="remove_account_post(event)">Delete account</button>
+        </div>
+
+    </div>
+    <script>
+
+        function on_submit(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            console.log("submit");
+            if (document.getElementById('psw').value === document.getElementById('psw_r').value && document.getElementById('psw').value){
+                event.target.submit();
+            } else{
+                document.getElementById('error').style.display = "block";
+            }
+        }
+
+
+        var tab_buttons = document.getElementsByClassName('tab_button');
+        var tab_content = document.getElementsByClassName('tab_content');
+        var selected_ind = -1;
+        function open_tab(ind) {
+            for (let i=0; i<tab_buttons.length; i++){
+                tab_buttons[i].classList.remove('w3-border-orange');
+                tab_content[i].style.display = "none";
+            }
+            if (selected_ind !== ind){
+                tab_buttons[ind].classList.add('w3-border-orange');
+                tab_content[ind].style.display = "flex";
+                selected_ind = ind;
+            }else{
+                selected_ind = -1;
+            }
+            console.log(`${tab_buttons}`)
+        }
+
+        token = document.querySelector("[name=csrfmiddlewaretoken]").value;
+        function remove_file_post(evt, id) {
+            xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "/note/remove_file/" + id);
+            xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhttp.onload = function () {
+                if (xhttp.status === 200) {
+                    ans = JSON.parse(xhttp.responseText);
+                    if (ans.status === 'success') {
+                        document.getElementById('storage_status').innerText = format_file_size(ans.used_space) + " of " + format_file_size(ans.total_space);
+                        evt.target.parentElement.parentElement.removeChild(evt.target.parentElement);
+                    }
+                }
+            };
+            xhttp.send('csrfmiddlewaretoken=' + encodeURIComponent(token));
+        }
+
+        function remove_note_post(evt, id) {
+            xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "/note/remove_note/" + id);
+            xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhttp.onload = function () {
+                if (xhttp.status === 200) {
+                    evt.target.parentElement.parentElement.removeChild(evt.target.parentElement);
+                }
+            };
+            xhttp.send('csrfmiddlewaretoken=' + encodeURIComponent(token));
+        }
+
+        function remove_account_post(evt) {
+            if (confirm("Are you sure want to delete account?")){
+                xhttp = new XMLHttpRequest();
+                xhttp.open("POST", "/account/delete/");
+                xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhttp.onload = function () {
+                    if (xhttp.status === 200) {
+                        window.location.href = "/";
+                    }
+                };
+                xhttp.send('csrfmiddlewaretoken=' + encodeURIComponent(token));
+            }
+
+        }
+    </script>
+{% endblock %}
