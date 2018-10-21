@@ -1,21 +1,22 @@
 from django.shortcuts import render, reverse, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User, AbstractUser
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
 from urllib.parse import unquote
+from django.utils import timezone
 
 from notes.models import Note, ToDoList, Tag
-from .models import UserStorage
 # Create your views here.
 
 
 def register_view(request):
     if not request.user.is_authenticated:
         if request.method == 'POST':
-            if request.POST["login"] and not User.objects.filter(username=request.POST["login"]).exists():
+            if request.POST["login"] and not get_user_model().objects.filter(username=request.POST["login"]).exists():
 
-                user = User.objects.create_user(request.POST["login"], '', request.POST["password"])
+                user = get_user_model().objects.create_user(request.POST["login"], '', request.POST["password"])
+                user.timezone_offset = request.POST["timezone_offset"]
                 user.save()
 
                 login(request, user)
@@ -24,10 +25,7 @@ def register_view(request):
                 else:
                     return HttpResponseRedirect(reverse('main:index_view'))
 
-            else:
-                return render(request, "main/register.html")
-        else:
-            return render(request, "main/register.html")
+        return render(request, "main/register.html")
     else:
         return HttpResponse("U already logged in")
 
@@ -44,7 +42,6 @@ def login_view(request):
             else:
                 return HttpResponseRedirect(reverse('main:index_view'))
         else:
-
             return render(request, "main/login.html")
     else:
         return HttpResponse("U already logged in")
@@ -67,16 +64,17 @@ def index_view(request):
 
 @login_required
 def search(request):
-    n = Note.objects.filter(owner=request.user)
+
     query = request.META['QUERY_STRING']
     k, v = '', ''
-
     if query:
         for i in query.split("&"):
             if i:
                 k, v = i.split("=")
                 if k == "tags":
                     break
+
+    notes = Note.objects.filter(owner=request.user)
     if k == "tags":
         include = []
         exclude = []
@@ -88,25 +86,23 @@ def search(request):
                 else:
                     include.append(unquote(t))
         for tag in include:
-            n = n.filter(tags__name__iexact=tag)
+            notes = notes.filter(tags__name=tag)
         for tag in exclude:
-            n = n.exclude(tags__name__iexact=tag)
+            notes = notes.exclude(tags__name=tag)
 
-    text = ''
     if "text" in request.GET.keys():
         text = request.GET["text"]
-    if text:
-        n = n.filter(plain_text__search=text)
+        notes = notes.filter(plain_text__search=text)
 
     tag_list = Tag.objects.filter(owner=request.user)
 
-    return render(request, "main/search.html", {'tag_list': tag_list, 'title': "Note creation", 'note_list': n.all()})
+    return render(request, "main/search.html", {'tag_list': tag_list, 'title': "Note creation", 'note_list': notes})
 
 
-def login_check(request):
+def username_check(request):
     login_str = request.GET['login']
 
-    if User.objects.filter(username=login_str).exists() or not login_str:
+    if not login_str or get_user_model().objects.filter(username=login_str).exists():
         ans = "False"
     else:
         ans = "True"

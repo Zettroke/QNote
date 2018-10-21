@@ -30,7 +30,7 @@ def note_detail(request, note_id):
 @login_required
 def note_creation(request):
     tag_list = Tag.objects.filter(owner=request.user)
-    free_space = request.user.storage.total_space - request.user.storage.used_space
+    free_space = request.user.total_space - request.user.used_space
     return render(request, "notes/create.html", {'tag_list': tag_list, 'title': "Note creation", "available_space": free_space})
 
 
@@ -41,14 +41,13 @@ def html_to_plain_text(text):
 
 @login_required
 def note_add(request):
-    start = time.clock()
     note = None
     try:
         if not request.POST["title"]:
             return JsonResponse({"status": "error", "error": "no title"})
 
         attach_size = sum(map(lambda x: x.size, request.FILES.values()))
-        free_space = request.user.storage.total_space - request.user.storage.used_space
+        free_space = request.user.total_space - request.user.used_space
         if attach_size > free_space:
             return JsonResponse({"status": "error", "error": "no space", "free": free_space, "required": attach_size})
 
@@ -122,8 +121,6 @@ def note_add(request):
             if f.type == File.IMAGE:
                 thumbnailer.make_thumbnail(f.get_file_path())
 
-        stop = time.clock()
-        print("note created in {}s.".format(str(stop - start)))
         return JsonResponse({"status": "success"})
     except KeyError as e:
 
@@ -159,9 +156,10 @@ def remove_file(request, file_id):
     file = get_object_or_404(File, id=file_id)
     if file.owner == request.user:
         file.delete()
+        request.user.refresh_from_db()
         return JsonResponse({'status': "success",
-                             'used_space': request.user.storage.used_space,
-                             'total_space': request.user.storage.total_space})
+                             'used_space': request.user.used_space,
+                             'total_space': request.user.total_space})
     else:
         return HttpResponseForbidden()
 
@@ -170,8 +168,13 @@ def remove_file(request, file_id):
 def remove_note(request, note_id):
     note = get_object_or_404(Note, id=note_id)
     if note.owner == request.user:
+        file_ids = list(map(lambda x: x[0], note.file_set.values_list('id')))
         note.delete()
-        return HttpResponse("success")
+        request.user.refresh_from_db()
+        return JsonResponse({'status': "success",
+                             'used_space': request.user.used_space,
+                             'total_space': request.user.total_space,
+                             'removed_files': file_ids}, safe=False)
     else:
         return HttpResponseForbidden()
 

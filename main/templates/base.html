@@ -28,8 +28,8 @@
         <div style="display: flex; flex-direction: row-reverse; align-items: center">
         {% if user and user.is_authenticated%}
             <a style="font-size: 20pt" href="/account">Hi, {{ user.username }}</a>
-            <i class="material-icons hover_darker w3-button w3-hover-orange" style="font-size: 24pt; padding: 5px" onclick="window.location.href='/search'">search</i>
-            <i class="material-icons hover_darker w3-button w3-hover-orange" style="font-size: 24pt; padding: 5px" onclick="window.location.href='/note/create'">add</i>
+            <a href="{% url "main:search" %}"><i class="material-icons hover_darker w3-button w3-hover-orange" style="font-size: 24pt; padding: 5px">search</i></a>
+            <a href="{% url "notes:creation" %}"><i class="material-icons hover_darker w3-button w3-hover-orange" style="font-size: 24pt; padding: 5px" onclick="window.location.href='/note/create'">add</i></a>
         {% else %}
             <a style="font-size: 20pt" href="/register">Register</a>
             <div style="font-size: 20pt">|</div>

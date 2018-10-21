@@ -23,7 +23,7 @@
             <input id='password' class="w3-input input" type="password" name="password" required>
             <label class="login_label" for="password">Repeat password</label>
             <input id='r_password' class="w3-input input" type="password" required>
-
+            <input id="timezone" type="hidden" name="timezone_offset">
             <button style="width: 100%; margin-top: 20px" class="w3-button w3-orange w3-hover-deep-orange" onclick="reg_submit()">Register</button>
 
         </form>
@@ -34,6 +34,7 @@
          var login_icon = document.getElementById("login_icon");
          function reg_submit(event) {
              if (document.getElementById("password").value === document.getElementById("r_password").value){
+                 document.getElementById('timezone').value = '' + (-(new Date().getTimezoneOffset()));
                  event.target.parentElement.submit();
              }else {
                  alert("Not same passwords")

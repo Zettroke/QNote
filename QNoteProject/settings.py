@@ -14,7 +14,7 @@ import os
 
 try:
     import secret_data
-    (secret_data.db_login, secret_data.db_password, secret_data.secret_key)
+    _ = (secret_data.db_login, secret_data.db_password, secret_data.secret_key)
 except Exception:
     raise Exception(
         """
@@ -39,6 +39,7 @@ SECRET_KEY = secret_data.secret_key
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+AUTH_USER_MODEL = 'main.User'
 
 if not DEBUG:
     import logging

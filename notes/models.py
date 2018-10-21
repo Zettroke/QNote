@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.conf import settings
@@ -12,7 +12,7 @@ import time
 class Tag(models.Model):
     name = models.CharField(max_length=50)
 
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -31,7 +31,7 @@ class Note(models.Model):
     importance = models.IntegerField(default=5)
 
     notification_config = models.OneToOneField('NotificationConfig', on_delete=models.CASCADE, null=True)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
     def __str__(self):
         if self.plain_text:
@@ -42,7 +42,7 @@ class Note(models.Model):
 
 class ToDoList(models.Model):
     note = models.ForeignKey(Note, on_delete=models.CASCADE)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
 
 class ToDoEntry(models.Model):
@@ -50,6 +50,10 @@ class ToDoEntry(models.Model):
     is_complete = models.BooleanField(default=False)
     date_complete = models.DateTimeField(null=True)
     to_do_list = models.ForeignKey(ToDoList, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ('pk',)
+
 
 
 class NotificationConfig(models.Model):
@@ -66,7 +70,7 @@ class File(models.Model):
     AUDIO = 'audio'
     FILE = 'file'
 
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     note = models.ForeignKey(Note, on_delete=models.CASCADE, default=None)
     name = models.CharField(max_length=512)
     folder = models.CharField(max_length=20)
@@ -100,14 +104,14 @@ def file_post_delete(sender, instance, **kwargs):
 
     if not os.listdir(instance.get_folder_path()):
         os.rmdir(instance.get_folder_path())
-    instance.owner.storage.used_space -= instance.size
-    instance.owner.storage.save()
+    instance.owner.used_space -= instance.size
+    instance.owner.save()
     pass
 
 
 @receiver(post_save, sender=File)
 def file_post_save(sender, instance, created, **kwargs):
     if created:
-        instance.owner.storage.used_space += instance.size
-        instance.owner.storage.save()
+        instance.owner.used_space += instance.size
+        instance.owner.save()
 

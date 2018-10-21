@@ -12,9 +12,6 @@
             width: fit-content;
             text-align: center;
         }
-        .hor_line{
-            margin: 2px -5px;
-        }
         .file_data{
             padding: 0 5px;
             border: 1px solid #ccc;
@@ -32,15 +29,18 @@
         .thumbnail{
             font-size: 80px!important;
         }
+        .note_content{
+            border-radius: 0;
+        }
 
     </style>
 
     <div style="margin: 20px">
         <div style="width: 100%; max-width: 1000px; margin: auto">
             <div style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap">
-                <div style="display: flex; align-items: baseline; flex-wrap: wrap">
-                    <h1 style="margin: 50px 0; margin-right: 50px; font-weight: 500">{{ user.username }}'s account:</h1>
-                    <p id="storage_status">{{ user.storage.used_space|filesizeformat }} of {{ user.storage.total_space|filesizeformat }}</p>
+                <div style="display: flex; align-items: baseline; flex-wrap: wrap;margin: 50px 0; ">
+                    <h1 style="margin-right: 50px; font-weight: 500">{{ user.username }}'s account:</h1>
+                    <p id="storage_status">{{ user.used_space|filesizeformat }} of {{ user.total_space|filesizeformat }}</p>
                 </div>
                 <button class="w3-button w3-orange w3-hover-orange hover_darker" onclick="window.location.href = '/logout'">Logout</button>
             </div>
@@ -74,7 +74,7 @@
         <div class="tab_content" style="display: none; flex-wrap: wrap; align-items: flex-start; justify-content: space-evenly">
             {% load notes_extra %}
             {% for file in files %}
-                <div class="file_data">
+                <div id="file_{{ file.id }}" class="file_data">
                     <a target="_blank" style="text-decoration: none" href="{{ file.get_file_url }}" title="{{ file.name }}">
                         {% if file.type == "img" %}
                             <div class="thumbnail_container">
@@ -96,7 +96,7 @@
                         <hr class="hor_line">
                         <div style="display: flex; justify-content: space-between; flex-wrap: wrap; font-size: 13px">
                             <p style="margin-right: 10px">{{ file.size|filesizeformat }}</p>
-
+                            {% load tz %}
                             <p>{{ file.note.date_created|date:"d.m.y G:i" }}</p>
                         </div>
                     </div>
@@ -105,7 +105,8 @@
                 </div>
             {% endfor %}
         </div>
-        <div style="width: 100%; max-width: 1000px; margin: auto; margin-top: 25px">
+        <hr class="hor_line">
+        <div style="width: 100%; max-width: 1000px; margin: auto; margin-top: 50px">
             <button class="w3-button w3-orange w3-hover-orange hover_darker" onclick="remove_account_post(event)">Delete account</button>
         </div>
 
@@ -133,13 +134,21 @@
                 tab_content[i].style.display = "none";
             }
             if (selected_ind !== ind){
+                let param = tab_buttons[ind].innerText.toLowerCase();
+                let url = '';
+                if (window.location.href.indexOf("#") !== -1){
+                    url = window.location.href.slice(0, window.location.href.indexOf("#")) + "#" + param;
+                }else{
+                    url = window.location.href + "#" + param;
+                }
+                window.history.pushState(null, '', url);
+
                 tab_buttons[ind].classList.add('w3-border-orange');
                 tab_content[ind].style.display = "flex";
                 selected_ind = ind;
             }else{
                 selected_ind = -1;
             }
-            console.log(`${tab_buttons}`)
         }
 
         token = document.querySelector("[name=csrfmiddlewaretoken]").value;
@@ -165,7 +174,16 @@
             xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             xhttp.onload = function () {
                 if (xhttp.status === 200) {
-                    evt.target.parentElement.parentElement.removeChild(evt.target.parentElement);
+                    ans = JSON.parse(xhttp.responseText);
+                    if (ans.status === 'success') {
+                        document.getElementById('storage_status').innerText = format_file_size(ans.used_space) + " of " + format_file_size(ans.total_space);
+                        evt.target.parentElement.parentElement.removeChild(evt.target.parentElement);
+                        for (let i=0; i<ans.removed_files.length; i++){
+                            let file_id = ans.removed_files[i];
+                            let o = document.getElementById("file_" + file_id);
+                            o.parentElement.removeChild(o);
+                        }
+                    }
                 }
             };
             xhttp.send('csrfmiddlewaretoken=' + encodeURIComponent(token));
@@ -182,6 +200,17 @@
                     }
                 };
                 xhttp.send('csrfmiddlewaretoken=' + encodeURIComponent(token));
+            }
+
+        }
+
+        let current_url = window.location.href;
+        if (current_url.indexOf('#') !== -1){
+            let param = current_url.slice(current_url.indexOf('#'));
+            if (param === "#notes"){
+                open_tab(0);
+            }else if(param === "#files"){
+                open_tab(1);
             }
 
         }
