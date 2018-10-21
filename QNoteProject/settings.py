@@ -73,6 +73,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'main.middleware.auto_timezone.UserTimezoneAutoSetupMiddleware',
 ]
 
 ROOT_URLCONF = 'QNoteProject.urls'
