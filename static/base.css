@@ -14,8 +14,8 @@
     border-top: 1px #ccc solid
 }
 .tag_list{
-    /*display: flex;
-    flex-wrap: wrap;*/
+    display: flex;
+    flex-wrap: wrap;
     overflow: auto;
     padding: 0;
 }
@@ -26,7 +26,6 @@
     background: lightgrey;
     border-radius: 15px;
     margin: 2.5px 2.5px;
-    float: left;
 }
 .hover_darker:hover{
     filter: brightness(80%);
@@ -65,6 +64,7 @@ p{
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
+    align-items: flex-start;
 }
 
 .thumbnail_container{
@@ -81,10 +81,17 @@ p{
 }
 .thumbnail{
     padding: 1px;
-    font-size: 40px!important;
     max-height: 100%;
     max-width: 100%;
+
 }
+img.thumbnail{
+    font-size: 15px;
+}
+i.thumbnail{
+    font-size: 40px!important;
+}
+
 .file_label{
     text-align: center;
     width: 100%;

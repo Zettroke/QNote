@@ -100,7 +100,6 @@ def note_add(request):
 
         # Attachment processing
         for v in request.FILES.values():
-            # md5 = hashlib.md5()
             f = File(
                 owner=request.user,
                 note=note,

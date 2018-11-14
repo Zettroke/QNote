@@ -47,7 +47,7 @@
                 <div id="error_no_space" class="w3-text-red error_message" style="display: none">Not enough space for files. Available: {{ available_space|filesizeformat }}</div>
                 <label>Tags:</label>
                 <div id="tag_list" style="display: flex; flex-wrap: wrap">
-                    <input class="w3-input tag" name="tag0" type="text" list="tags" oninput="event_update_input_width()">
+                    <input class="w3-input tag" name="tag0" type="text" list="tags" oninput="event_update_input_width(event)">
                     <div class="w3-center tag_add_button" onclick="addTag()">+</div>
                 </div>
                 <input id="tag_counter" type="hidden" value=1 name="tag_count">

@@ -26,12 +26,13 @@
             width: 152px;
             height: 152px;
         }
-        .thumbnail{
+        i.thumbnail{
             font-size: 80px!important;
         }
         .note_content{
             border-radius: 0;
         }
+    option:hover .w3-orange{}
 
     </style>
 
@@ -44,6 +45,50 @@
                 </div>
                 <button class="w3-button w3-orange w3-hover-orange hover_darker" onclick="window.location.href = '/logout'">Logout</button>
             </div>
+            <form action="{% url "main:set_account_timezone" %}" method="post" style="margin-bottom: 25px">
+                {% csrf_token %}
+                <h2><label for="timezone_select" style="display: block">Timezone:</label></h2>
+                <select id="timezone_select" class="w3-select" style="width: auto" onchange="this.parentElement.submit()" name="timezone_offset">
+                    <option {% if user.timezone_offset == -720 %} selected="selected" {% endif %} value="-720">UTC−12:00</option>
+                    <option {% if user.timezone_offset == -660 %} selected="selected" {% endif %} value="-660">UTC−11:00</option>
+                    <option {% if user.timezone_offset == -600 %} selected="selected" {% endif %} value="-600">UTC−10:00</option>
+                    <option {% if user.timezone_offset == -570 %} selected="selected" {% endif %} value="-570">UTC−09:30</option>
+                    <option {% if user.timezone_offset == -540 %} selected="selected" {% endif %} value="-540">UTC−09:00</option>
+                    <option {% if user.timezone_offset == -480 %} selected="selected" {% endif %} value="-480">UTC−08:00</option>
+                    <option {% if user.timezone_offset == -420 %} selected="selected" {% endif %} value="-420">UTC−07:00</option>
+                    <option {% if user.timezone_offset == -360 %} selected="selected" {% endif %} value="-360">UTC−06:00</option>
+                    <option {% if user.timezone_offset == -300 %} selected="selected" {% endif %} value="-300">UTC−05:00</option>
+                    <option {% if user.timezone_offset == -240 %} selected="selected" {% endif %} value="-240">UTC−04:00</option>
+                    <option {% if user.timezone_offset == -210 %} selected="selected" {% endif %} value="-210">UTC−03:30</option>
+                    <option {% if user.timezone_offset == -180 %} selected="selected" {% endif %} value="-180">UTC−03:00</option>
+                    <option {% if user.timezone_offset == -120 %} selected="selected" {% endif %} value="-120">UTC−02:00</option>
+                    <option {% if user.timezone_offset == -60 %} selected="selected" {% endif %} value="-60">UTC−01:00</option>
+                    <option {% if user.timezone_offset == 0 %} selected="selected" {% endif %} value="0">UTC±00:00</option>
+                    <option {% if user.timezone_offset == 60 %} selected="selected" {% endif %} value="60">UTC+01:00</option>
+                    <option {% if user.timezone_offset == 120 %} selected="selected" {% endif %} value="120">UTC+02:00</option>
+                    <option {% if user.timezone_offset == 180 %} selected="selected" {% endif %} value="180">UTC+03:00</option>
+                    <option {% if user.timezone_offset == 210 %} selected="selected" {% endif %} value="210">UTC+03:30</option>
+                    <option {% if user.timezone_offset == 240 %} selected="selected" {% endif %} value="240">UTC+04:00</option>
+                    <option {% if user.timezone_offset == 270 %} selected="selected" {% endif %} value="270">UTC+04:30</option>
+                    <option {% if user.timezone_offset == 300 %} selected="selected" {% endif %} value="300">UTC+05:00</option>
+                    <option {% if user.timezone_offset == 330 %} selected="selected" {% endif %} value="330">UTC+05:30</option>
+                    <option {% if user.timezone_offset == 345 %} selected="selected" {% endif %} value="345">UTC+05:45</option>
+                    <option {% if user.timezone_offset == 360 %} selected="selected" {% endif %} value="360">UTC+06:00</option>
+                    <option {% if user.timezone_offset == 390 %} selected="selected" {% endif %} value="390">UTC+06:30</option>
+                    <option {% if user.timezone_offset == 420 %} selected="selected" {% endif %} value="420">UTC+07:00</option>
+                    <option {% if user.timezone_offset == 480 %} selected="selected" {% endif %} value="480">UTC+08:00</option>
+                    <option {% if user.timezone_offset == 525 %} selected="selected" {% endif %} value="525">UTC+08:45</option>
+                    <option {% if user.timezone_offset == 540 %} selected="selected" {% endif %} value="540">UTC+09:00</option>
+                    <option {% if user.timezone_offset == 570 %} selected="selected" {% endif %} value="570">UTC+09:30</option>
+                    <option {% if user.timezone_offset == 600 %} selected="selected" {% endif %} value="600">UTC+10:00</option>
+                    <option {% if user.timezone_offset == 630 %} selected="selected" {% endif %} value="630">UTC+10:30</option>
+                    <option {% if user.timezone_offset == 660 %} selected="selected" {% endif %} value="660">UTC+11:00</option>
+                    <option {% if user.timezone_offset == 720 %} selected="selected" {% endif %} value="720">UTC+12:00</option>
+                    <option {% if user.timezone_offset == 765 %} selected="selected" {% endif %} value="765">UTC+12:45</option>
+                    <option {% if user.timezone_offset == 780 %} selected="selected" {% endif %} value="780">UTC+13:00</option>
+                    <option {% if user.timezone_offset == 840 %} selected="selected" {% endif %} value="840">UTC+14:00</option>
+                </select>
+            </form>
             <hr class="hor_line">
             <div style="">
                 <h2>Change password:</h2>
@@ -55,7 +100,7 @@
                     <label for="psw_r">Repeat password</label>
                     <input id="psw_r" class="w3-input" type="password">
                     <div id="error" class="w3-text-red" style="display: none">You entered different passwords. Try again</div>
-                    <input type="submit" class="w3-button w3-orange w3-hover-orange hover_darker" style="margin: 10px 0">
+                    <input type="submit" class="w3-button w3-orange w3-hover-orange hover_darker" style="margin: 10px 0; font-size: 18px" value="Change password">
                 </form>
             </div>
             <hr class="hor_line" style="margin: 20px 0;">
@@ -66,12 +111,12 @@
                 <button class="tab_button w3-button w3-bottombar" style="margin: 0 5px" onclick="open_tab(1)">Files</button>
             </div>
         </div>
-        <div class="tab_content note_list" style="display: none">
+        <div class="tab_content note_list w3-animate-opacity" style="display: none;">
             {% for note in notes %}
                 {% include "notes/note.html" with note_edit=True %}
             {% endfor %}
         </div>
-        <div class="tab_content" style="display: none; flex-wrap: wrap; align-items: flex-start; justify-content: space-evenly">
+        <div class="tab_content w3-animate-opacity" style="display: none; flex-wrap: wrap; align-items: flex-start; justify-content: space-evenly;">
             {% load notes_extra %}
             {% for file in files %}
                 <div id="file_{{ file.id }}" class="file_data">
@@ -91,22 +136,20 @@
                         {% endif %}
                         </a>
                     </td>
-                    <div>
-                        <p style="word-break: break-word">{{ file.name }}</p>
-                        <hr class="hor_line">
-                        <div style="display: flex; justify-content: space-between; flex-wrap: wrap; font-size: 13px">
-                            <p style="margin-right: 10px">{{ file.size|filesizeformat }}</p>
-                            {% load tz %}
-                            <p>{{ file.note.date_created|date:"d.m.y G:i" }}</p>
-                        </div>
+                    <p style="word-break: break-all">{{ file.name }}</p>
+                    <hr class="hor_line" style="width: calc(100% + 10px);">
+                    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; font-size: 13px; width: 100%">
+                        <p style="margin-right: 10px">{{ file.size|filesizeformat }}</p>
+                        {% load tz %}
+                        <p>{{ file.note.date_created|date:"d.m.y G:i" }}</p>
                     </div>
                     <div class="w3-button w3-orange w3-hover-orange hover_darker" style="width: calc(100% + 10px); border-radius: 0 0 8px 8px;"
                          onclick="remove_file_post(event, {{ file.id }})">Delete</div>
                 </div>
             {% endfor %}
         </div>
-        <hr class="hor_line">
-        <div style="width: 100%; max-width: 1000px; margin: auto; margin-top: 50px">
+        <hr class="hor_line" style="margin-top: 25px">
+        <div style="width: 100%; max-width: 1000px; margin: 50px auto auto auto;">
             <button class="w3-button w3-orange w3-hover-orange hover_darker" onclick="remove_account_post(event)">Delete account</button>
         </div>
 
@@ -148,6 +191,7 @@
                 selected_ind = ind;
             }else{
                 selected_ind = -1;
+                window.history.pushState(null, '', window.location.href.slice(0, window.location.href.indexOf("#")));
             }
         }
 

@@ -42,9 +42,9 @@
                 {% if file.type == "img" %}
                     <div class="thumbnail_container">
                         {% if not file.is_gif %}
-                        <img class="thumbnail" src="{{ file.get_file_thumbnail_url }}" alt="thumbnail for {{ file.name }}">
+                        <img class="thumbnail" src="{{ file.get_file_thumbnail_url }}" alt="thumbnail for {{ file.name }}" style="font-size: small">
                         {% else %}
-                        <img class="thumbnail" src="{{ file.get_file_url }}" alt="{{ file.name }}">
+                        <img class="thumbnail" src="{{ file.get_file_url }}" alt="{{ file.name }}" style="font-size: small">
 
                         {% endif %}
                     </div>
@@ -57,16 +57,18 @@
                 </a>
             {% endfor %}
         </div>
-
         {% if note.tags.all|length %}
             <hr class="hor_line">
-            <div class="tag_list">
-                {% for tag in note.tags.all %}
-                    <a href="/search?tags={{ tag.name|urlencode }}"><div class="tag">{{ tag.name }}</div></a>
-                {% endfor %}
-            </div>
         {% endif %}
-        <p style="text-align: right; font-size: 11px; color: grey; margin: 0">{{ note.date_created|date:"d.m.y G:i" }}</p>
+            <div class="tag_list" style="align-items: flex-end">
+                {% for tag in note.tags.all %}
+                    <a href="/search?tags={{ tag.name|urlencode }}" style="text-decoration: none"><div class="tag">{{ tag.name }}</div></a>
+                {% endfor %}
+                <p style="text-align: right; font-size: 11px; color: grey; margin: 0; flex-grow: 1">{{ note.date_created|date:"d.m.y G:i" }}</p>
+            </div>
+
+        <div style="flex-grow: 1"></div>
+        <!--<p style="text-align: right; font-size: 11px; color: grey; margin: 0">{{ note.date_created|date:"d.m.y G:i" }}</p>-->
     </div>
     {% if note_edit %}
         <div class="w3-button w3-orange w3-hover-orange hover_darker" style="width: 100%; border-radius: 0 0 9px 9px;"

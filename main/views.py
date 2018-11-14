@@ -118,6 +118,14 @@ def account_view(request):
 
 
 @login_required
+def set_account_timezone(request):
+    t = int(request.POST["timezone_offset"])
+    request.user.timezone_offset = t
+    request.user.save()
+    return HttpResponseRedirect(reverse("main:account_view"))
+
+
+@login_required
 def password_change(request):
     try:
         if request.method == "POST":

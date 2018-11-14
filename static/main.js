@@ -10,7 +10,7 @@ function mark_todo_entry(entry_id, checkbox) {
 
 }
 
-function event_update_input_width() {
+function event_update_input_width(event) {
     update_input_width(event.target);
 }
 
@@ -18,6 +18,7 @@ function update_input_width(element) {
     let d = document.createElement('div');
     d.classList.add("tag");
     d.style.width = "fit-content";
+    d.style.width += "-moz-fit-content";
     d.innerText = element.value;
     document.body.appendChild(d);
     let w = d.clientWidth;

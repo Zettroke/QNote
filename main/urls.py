@@ -12,5 +12,6 @@ urlpatterns = [
     path('search', views.search, name='search'),
     path('account', views.account_view, name='account_view'),
     path('account/password_change/', views.password_change, name='password_change'),
-    path('account/delete/', views.delete_account, name='delete_account')
+    path('account/delete/', views.delete_account, name='delete_account'),
+    path('account/set_timezone/', views.set_account_timezone, name='set_account_timezone')
 ]

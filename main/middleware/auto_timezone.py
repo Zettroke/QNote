@@ -6,7 +6,6 @@ class UserTimezoneAutoSetupMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-
         if request.user.is_authenticated:
             timezone.activate(timezone.FixedOffset(request.user.timezone_offset))
 

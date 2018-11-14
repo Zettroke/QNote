@@ -58,7 +58,7 @@
 
     <div id="tag_elem_container" style="display: none">
         <div class="dropdown">
-            <input class="w3-input tag" list="tags" oninput="event_update_input_width()">
+            <input class="w3-input tag" list="tags" oninput="event_update_input_width(event)">
             <div class="dropdown-content">
                 <div><button class="w3-button" onclick="curr = event.target.parentNode.parentNode.parentNode.firstElementChild; curr.classList.remove('include', 'exclude'); curr.classList.add('include');">include</button></div>
                 <div><button class="w3-button" onclick="curr = event.target.parentNode.parentNode.parentNode.firstElementChild; curr.classList.remove('include', 'exclude'); curr.classList.add('exclude');">exclude</button></div>
